@@ -1,0 +1,22 @@
+doctype html
+html
+	head
+		title= DESCRIPTION
+		meta(charset="utf-8")
+		meta(name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no")
+		link(rel="stylesheet" href='./' + BOOTSTRAP)
+
+		style body {padding-top: 1rem;} .row {min-height: 5rem;}
+		script $ = require("./#{JQUERY}"); require("./renderer.js")
+
+	body
+		.container-fluid
+			.row.align-items-center.justify-content-center
+				.col-4.text-center
+					button#test.btn.btn-primary Test
+				.col-4.text-center
+					button#reset.btn.btn-danger Reload
+			.row.align-items-left
+				.col
+					pre#log.alert.alert-dark
+						div Renderer script did not load.

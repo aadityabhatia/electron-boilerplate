@@ -1,0 +1,33 @@
+{
+  "name": "electron-boilerplate",
+  "version": "0.0.1",
+  "description": "A simple desktop app built with Electron",
+  "main": "main.js",
+  "dependencies": {},
+  "scripts": {
+    "build": "gulp build",
+    "package": "gulp package",
+    "prestart": "gulp build",
+    "start": "electron out",
+    "test": "gulp build"
+  },
+  "devDependencies": {
+    "asar": "^0.14.3",
+    "chalk": "^2.4.0",
+    "coffeescript": "^2.2.4",
+    "electron": "^1.8.4",
+    "gulp": "^4.0.0",
+    "gulp-coffee": "^3.0.2",
+    "gulp-pug": "^4.0.1",
+    "gulp-uglify-es": "^1.0.1",
+    "request": "^2.85.0",
+    "rimraf": "^2.6.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aadityabhatia/electron-boilerplate.git"
+  },
+  "private": true,
+  "author": "Aaditya Bhatia <aadityabhatia@gmail.com>",
+  "license": "SEE LICENSE IN license.txt"
+}
