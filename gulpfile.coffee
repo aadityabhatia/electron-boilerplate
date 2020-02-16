@@ -66,7 +66,8 @@ gulp.task 'clean', ->
 
 gulp.task 'modules', ->
 	mkdir DIR_OUT
-	fs.copyFileSync 'package.json', path.join DIR_OUT, 'package.json'
+	gulp.src ['package.json', 'package-lock.json']
+		.pipe gulp.dest DIR_OUT
 	child = spawn 'npm', ['install', '--production'], cwd: DIR_OUT
 	child.stdout.on 'data', (data) => log chalk.gray "[npm] " + data.toString().trim()
 	child.stderr.on 'data', (data) => log.error chalk.gray "[npm] " + chalk.bold.red data.toString().trim()
