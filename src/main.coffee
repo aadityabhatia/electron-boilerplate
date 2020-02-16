@@ -2,18 +2,29 @@
 path = require 'path'
 url = require 'url'
 
-app.on 'ready', ->
-	win = new BrowserWindow()
-	win.setMenu(null)
+window = null
+app.allowRendererProcessReuse = true # this is to prevent deprecation warning
 
-	win.loadURL url.format
-		pathname: path.join(__dirname, 'index.html')
-		protocol: 'file:'
-		slashes: true
+if not app.requestSingleInstanceLock()
+	app.quit()
 
-	win.on 'closed', -> app.quit()
+app.on 'second-instance', =>
+	if window
+		window.restore()
+		window.focus()
 
-app.on 'window-all-closed', -> app.quit()
+app.whenReady().then =>
+	window = new BrowserWindow
+		title: app.name
+		autoHideMenuBar: true
+		show: false
+		webPreferences:
+			preload: path.join app.getAppPath(), 'preload.js'
+
+	window.loadFile path.join app.getAppPath(), 'index.html'
+
+	window.once 'closed', => app.quit()
+	window.once 'ready-to-show', => window.show()
 
 ipcMain.on 'stdout', (event, message) => console.log message
 ipcMain.on 'stderr', (event, message) => console.error message

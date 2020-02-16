@@ -1,13 +1,14 @@
 doctype html
 html
 	head
-		title= DESCRIPTION
 		meta(charset="utf-8")
 		meta(name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no")
+		meta(http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'")
 		link(rel="stylesheet" href='./' + BOOTSTRAP)
 
 		style body {padding-top: 1rem;} .row {min-height: 5rem;}
-		script $ = require("./#{JQUERY}"); require("./renderer.js")
+		script(src='./' + JQUERY)
+		script(src="./renderer.js")
 
 	body
 		.container-fluid

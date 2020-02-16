@@ -1,10 +1,7 @@
-{remote, ipcRenderer} = require 'electron'
+{log} = window
 
-log =
-	stdout: (message) => ipcRenderer.send 'stdout', message
-	stderr: (message) => ipcRenderer.send 'stderr', message
-	clear: => $('#log').empty()
-	web: (message) => $('#log').append $('<div>').html message
+log.clear = => $('#log').empty()
+log.web = (message) => $('#log').prepend $('<div>').text message
 
 log.stdout "It works!"
 
@@ -12,4 +9,4 @@ $ ->
 	log.clear()
 	log.web "It works!"
 	$('#test').click => log.web "Success!"
-	$('#reset').click => remote.getCurrentWindow().reload()
+	$('#reset').click => window.reload()

@@ -5,17 +5,16 @@ uglify = require('gulp-uglify-es').default
 asar = require 'asar'
 chalk = require 'chalk'
 fs = require 'fs'
+https = require 'https'
 log = require 'fancy-log'
 path = require 'path'
-pkginfo = require './package.json'
-request = require 'request'
 rimraf = require 'rimraf'
 {spawn} = require 'child_process'
 
 DIR_SRC = 'src'
 DIR_OUT = 'out'
-URL_JQUERY = "https://code.jquery.com/jquery-3.3.1.slim.min.js"
-URL_BOOTSTRAP = "https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+URL_JQUERY = "https://code.jquery.com/jquery-3.4.1.slim.min.js"
+URL_BOOTSTRAP = "https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
 
 gulp.task 'default', (done) ->
 	console.log "\nThe following tasks are available:\n\n\t" +
@@ -35,14 +34,15 @@ download = (url) ->
 			log chalk.bold.green "found: #{name}"
 			return resolve()
 		log "downloading: #{url}"
-		request url, (error, response, body) ->
-			if not error and response.statusCode is 200
+		https.get url, (response) ->
+			if response.statusCode is 200
 				mkdir DIR_OUT
-				fs.writeFileSync destination, body
 				log chalk.bold.green "downloaded: #{name}"
+				response.pipe fs.createWriteStream destination
 				return resolve()
 			else
 				log.error chalk.bold.red "#{name} download failed: #{response.statusCode}"
+				response.resume()
 				throw new Error "#{name} download failed: #{response.statusCode}"
 
 gulp.task 'download', -> Promise.all [download URL_JQUERY, download URL_BOOTSTRAP]
@@ -51,7 +51,6 @@ buildPug = ->
 	gulp.src path.join DIR_SRC, '*.pug'
 		.pipe pug
 			locals:
-				DESCRIPTION: pkginfo.description
 				JQUERY: path.basename URL_JQUERY
 				BOOTSTRAP: path.basename URL_BOOTSTRAP
 		.pipe gulp.dest DIR_OUT
@@ -90,12 +89,12 @@ gulp.task 'modules', ->
 
 gulp.task 'asar', ->
 	new Promise (resolve) ->
-		asar.createPackage DIR_OUT, 'app.asar', ->
-			if not fs.existsSync 'app.asar'
-				log.error chalk.bold.red "archive creation failed: app.asar"
-				throw new Error "archive creation failed: app.asar"
-			log chalk.bold.green "archive created: app.asar"
-			resolve()
+		await asar.createPackage DIR_OUT, 'app.asar'
+		if not fs.existsSync 'app.asar'
+			log.error chalk.bold.red "archive creation failed: app.asar"
+			throw new Error "archive creation failed: app.asar"
+		log chalk.bold.green "archive created: app.asar"
+		resolve()
 
 gulp.task 'build', gulp.parallel 'download', 'coffee', 'pug', 'modules'
 gulp.task 'package', gulp.series 'clean', 'build', 'asar'
