@@ -13,8 +13,9 @@ rimraf = require 'rimraf'
 
 DIR_SRC = 'src'
 DIR_OUT = 'out'
-URL_JQUERY = "https://code.jquery.com/jquery-3.4.1.slim.min.js"
-URL_BOOTSTRAP = "https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+
+PATH_BOOTSTRAP = 'node_modules/bootstrap/dist/css/bootstrap.css'
+PATH_BOOTSTRAP_MAP = 'node_modules/bootstrap/dist/css/bootstrap.css.map'
 
 gulp.task 'default', (done) ->
 	console.log "\nThe following tasks are available:\n\n\t" +
@@ -26,33 +27,17 @@ mkdir = (directory) ->
 		fs.mkdirSync directory
 		log "created directory: #{directory}"
 
-download = (url) ->
-	name = path.basename url
-	destination = path.join DIR_OUT, name
-	new Promise (resolve) ->
-		if fs.existsSync destination
-			log chalk.bold.green "found: #{name}"
-			return resolve()
-		log "downloading: #{url}"
-		https.get url, (response) ->
-			if response.statusCode is 200
-				mkdir DIR_OUT
-				log chalk.bold.green "downloaded: #{name}"
-				response.pipe fs.createWriteStream destination
-				return resolve()
-			else
-				log.error chalk.bold.red "#{name} download failed: #{response.statusCode}"
-				response.resume()
-				throw new Error "#{name} download failed: #{response.statusCode}"
+getBootstrap = ->
+	gulp.src [PATH_BOOTSTRAP, PATH_BOOTSTRAP_MAP]
+		.pipe gulp.dest DIR_OUT
 
-gulp.task 'download', -> Promise.all [download URL_JQUERY, download URL_BOOTSTRAP]
+gulp.task 'css', getBootstrap
 
 buildPug = ->
 	gulp.src path.join DIR_SRC, '*.pug'
 		.pipe pug
 			locals:
-				JQUERY: path.basename URL_JQUERY
-				BOOTSTRAP: path.basename URL_BOOTSTRAP
+				BOOTSTRAP: path.basename PATH_BOOTSTRAP
 		.pipe gulp.dest DIR_OUT
 
 gulp.task 'pug', buildPug
@@ -96,5 +81,5 @@ gulp.task 'asar', ->
 		log chalk.bold.green "archive created: app.asar"
 		resolve()
 
-gulp.task 'build', gulp.parallel 'download', 'coffee', 'pug', 'modules'
+gulp.task 'build', gulp.parallel 'css', 'coffee', 'pug', 'modules'
 gulp.task 'package', gulp.series 'clean', 'build', 'asar'

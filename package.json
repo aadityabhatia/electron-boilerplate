@@ -4,7 +4,9 @@
   "version": "0.8.0",
   "description": "A simple desktop app built with Electron",
   "main": "main.js",
-  "dependencies": {},
+  "dependencies": {
+    "jquery": "^3.4.1"
+  },
   "scripts": {
     "build": "gulp build",
     "package": "gulp package",
@@ -14,6 +16,7 @@
   },
   "devDependencies": {
     "asar": "^2.0.0",
+    "bootstrap": "^4.4.1",
     "chalk": "^3.0.0",
     "coffeescript": "^2.5.1",
     "electron": "^8.0.1",

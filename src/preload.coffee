@@ -5,3 +5,6 @@ window.log = log =
 	stderr: (message) => ipcRenderer.send 'stderr', message
 
 window.reload = => remote.getCurrentWindow().reload()
+
+document.addEventListener 'DOMContentLoaded', =>
+	window.$ = window.jQuery = require 'jquery'
