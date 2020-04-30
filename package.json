@@ -5,7 +5,7 @@
   "description": "A simple desktop app built with Electron",
   "main": "main.js",
   "dependencies": {
-    "jquery": "^3.4.1"
+    "jquery": "^3.5.0"
   },
   "scripts": {
     "build": "gulp build",
